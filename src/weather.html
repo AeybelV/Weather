@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Weather</title>
+    <link href="css/styles.css" rel="stylesheet"/>
+    <script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?sensor=false"></script>
+    <script>
+    var geocoder;
+
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(successFunction, errorFunction);
+    }
+    //Get the latitude and the longitude;
+    function successFunction(position) {
+        var lat = position.coords.latitude;
+        var lng = position.coords.longitude;
+        codeLatLng(lat, lng)
+    }
+
+    function errorFunction(){
+        alert("Geocoder failed");
+    }
+
+      function initialize() {
+        geocoder = new google.maps.Geocoder();
+
+
+
+      }
+
+      function codeLatLng(lat, lng) {
+
+        var latlng = new google.maps.LatLng(lat, lng);
+        geocoder.geocode({'latLng': latlng}, function(results, status) {
+          if (status == google.maps.GeocoderStatus.OK) {
+          console.log(results)
+            if (results[1]) {
+             //formatted address
+             ipc.send('gotCity',results[0].address_components[2].long_name));
+            } else {
+              alert("No results found");
+            }
+          } else {
+            alert("Geocoder failed due to: " + status);
+          }
+        });
+      }
+    </script>
+  </head>
+  <body onload="initialize()">
+    <h1><span id = "city">Houston</span></h1>
+    <p><span id="temp"></span></p>
+
+
+    <!-- Outputs Temp-->
+    <script>
+    var ipc = require('ipc');
+    var tempdisplay = document.getElementById('temp');
+    ipc.send('getTemp','dat');
+    ipc.on('sendTemp', function(response){
+    tempdisplay.innerHTML = Math.round(response.temp).toString() + "°F";
+    });
+    </script>
+
+
+  </body>
+</html>
