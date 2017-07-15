@@ -6,9 +6,10 @@ var ipc = require('ipc');
 var weather = require("Openweather-Node");
 var wea = null;
 const fs = require("fs");
+const API_KEY = 0;
 app.on('ready', function(){
       window = new BrowserWindow({width:800, height:600});
-      weather.setAPPID("0b8d62ed8cc7b209a30a9fba64fa4d05");
+      weather.setAPPID(API_KEY);
       window.loadURL("file://"+__dirname+"/weather.html");
       window.setMenu(null);
       console.log("loaded page 'weather'");
